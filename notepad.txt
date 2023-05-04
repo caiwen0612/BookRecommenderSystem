@@ -1,0 +1,22 @@
+pip install streamlit = install
+streamlit hello = Check documentation
+streamlit run app.py =run it
+
+st.write = mark down = print things
+
+st.selectbox
+#Can check sidebar and selectbox
+
+Do research about this
+Can cache somethings in st, so u no need run again
+
+
+Understand about dataset
+Recommender System
+Type diff
+
+pip install streamlit --upgrade
+
+pip install pipreqs
+
+pipreqs ./
