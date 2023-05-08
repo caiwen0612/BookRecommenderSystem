@@ -1,4 +1,4 @@
-
+#AUthor: TAY CHAI BOON
 import os
 import pandas as pd
 
@@ -28,17 +28,19 @@ def dataPreparation():
     data_books['small_image_url'] = data_books['small_image_url'].astype('string')
     #tag
     data_tags['tag_name'] = data_tags['tag_name'].astype('string')
+    # data_books['original_publication_year'] = data_books['original_publication_year'].astype('int')
+    
 
     #Clean null data
     data_books.fillna('', inplace=True)
 
     #Drop useless column
     #TODO : Turn on this again
-    data_books = data_books.drop(columns = ['work_id', 'books_count', 'isbn',
-       'isbn13', 'average_rating', 'ratings_count',
-       'work_ratings_count', 'work_text_reviews_count', 'ratings_1',
-       'ratings_2', 'ratings_3', 'ratings_4', 'ratings_5', 
-       'small_image_url'])
+    # data_books = data_books.drop(columns = ['work_id', 'books_count', 'isbn',
+    #    'isbn13', 'average_rating', 'ratings_count',
+    #    'work_ratings_count', 'work_text_reviews_count', 'ratings_1',
+    #    'ratings_2', 'ratings_3', 'ratings_4', 'ratings_5', 
+    #    'small_image_url'])
     
     #TODO: Merge Dataset
     #Merge book_tag and data_tag

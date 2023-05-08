@@ -1,11 +1,11 @@
 import streamlit as st
 import os
 import pandas as pd
+from model.content_model import recommend_book_CV,recommend_book_TFIDF
 import numpy as np
 from sklearn.metrics.pairwise import cosine_similarity
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.feature_extraction.text import CountVectorizer
-
 # st.set_page_config(
 #     page_title = "Recommender System",
 #     page_icon = "📚" ,
@@ -40,61 +40,6 @@ if input_book_recommend_count:
 
 #Provide a button let user click
 button_recommend = st.button('Show Me What You Got!!')
-
-#Python Function
-def recommend_book_TFIDF(input_book_name,input_book_recommend_count):
-    #Read final csv files process
-    my_path_finalBook = os.path.join(os.getcwd(), "dataset", "Final.csv")
-    df_book = pd.read_csv(my_path_finalBook, low_memory=False)
-
-    tfidf = TfidfVectorizer(analyzer = 'word', lowercase=True, ngram_range = (1,2), min_df = 0, stop_words = 'english')
-    tfidf.fit(df_book['keywords'])
-
-    matrix_tfidf = tfidf.fit_transform(df_book['keywords'])
-    cosine_sim_tfidf = cosine_similarity(matrix_tfidf, matrix_tfidf)
-
-    series_tfidf = pd.Series(df_book.index, index = df_book['title'])
-    user_book_id_tfidf = series_tfidf[input_book_name]
-    # #TODO :?
-    # feature_array_tfidf = np.squeeze(matrix_tfidf[user_book_id_tfidf].toarray()) 
-    # idx_tfidf = np.where(feature_array_tfidf > 0)
-
-    n = int(input_book_recommend_count)
-    top_idx_tfidf = np.flip(np.argsort(cosine_sim_tfidf[user_book_id_tfidf,]), axis = 0)[0:n]
-    top_sim_values_tfidf = cosine_sim_tfidf[user_book_id_tfidf, top_idx_tfidf]
-    ##Make sure the 1.0 result which is input did not put in
-    top_idx_tfidf = top_idx_tfidf[top_sim_values_tfidf  > 0] 
-    scores = top_sim_values_tfidf[top_sim_values_tfidf  > 0] 
-
-    return top_idx_tfidf
-
-def recommend_book_CV(input_book_name,input_book_recommend_count):
-     #Read final csv files process
-    my_path_finalBook = os.path.join(os.getcwd(), "dataset", "Final.csv")
-    df_book = pd.read_csv(my_path_finalBook, low_memory=False)
-
-    cv = CountVectorizer(analyzer='word', lowercase=True, stop_words = 'english',ngram_range = (1,2), min_df = 0.002)
-    cv.fit(df_book['keywords'])
-
-    matrix_cv = cv.fit_transform(df_book['keywords'])
-    cosine_sim_cv = cosine_similarity(matrix_cv,matrix_cv)
-
-    series_cv = pd.Series(df_book.index, index = df_book['title'])
-    user_book_id_cv = series_cv[input_book_name]
-    # #TODO :?
-    # feature_array_cv = np.squeeze(matrix_cv[user_book_id_cv].toarray()) 
-    # idx_cv = np.where(feature_array_cv > 0)
-
-    n =  int(input_book_recommend_count) #how many books to be recommended
-    #np.argsort = ascending order
-    #flip = inverse the order so can get the descending order
-    top_idx_cv = np.flip(np.argsort(cosine_sim_cv[user_book_id_cv,]), axis = 0)[0:n]
-    top_sim_values_cv = cosine_sim_cv[user_book_id_cv, top_idx_cv]
-
-    top_idx_cv = top_idx_cv[top_sim_values_cv  > 0] ## Index
-    scores_cv = top_sim_values_cv[top_sim_values_cv  > 0] ## Score
-
-    return top_idx_cv
 
 
 #Validation for user input
@@ -134,6 +79,8 @@ if button_recommend:
         with st.spinner('Loading... for second recommendation '):
             result_cv = recommend_book_CV(input_book_name,input_book_recommend_count)
         
+        st.write("")
+        st.write("")
         #Display output
         st.success('Here is the list of recommendations for CountVectorizer algorithm, The first row indicate the book that u have input')
         #Display Final Result
@@ -142,7 +89,7 @@ if button_recommend:
         result_df = pd.DataFrame({
         "Image": data_result['image_url'].iloc[result_cv].values,
         "Title": data_result['title'].iloc[result_cv].values,
-        "Author": data_result['authors'].iloc[result_cv].values
+        "Author": data_result['authors'].iloc[result_cv].values,
         }
         , columns = ["Image","Title","Author"])
         html_table = '<table><thead><tr><th>Book Image</th><th>Title</th><th>Author</th></tr></thead><tbody>'
